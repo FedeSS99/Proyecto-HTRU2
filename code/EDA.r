@@ -1,4 +1,4 @@
-data_htru2 <- read.csv("./htru2/HTRU_2.csv", header = FALSE)
+data_htru2 <- read.csv("./data/HTRU_2.csv", header = FALSE)
 colnames(data_htru2) <- c("Mean IP", "Standard deviation IP",
                           "Excess kurtosis IP", "Skewness IP",
                           "Mean DM-SNR", "Standard deviation DM-SNR",
@@ -19,6 +19,8 @@ colors[Class_htru2 == 1] <- "red"
 
 # Graficamos por pares
 library(psych)
+
+png("./images/HTRU2_pairplots.png", width = 1600, height = 800)
 pairs.panels(data_htru2[,1:8],
   ellipses = FALSE,
   smooth = FALSE,
@@ -28,3 +30,4 @@ pairs.panels(data_htru2[,1:8],
   bg = colors,
   pch = 21
 )
+dev.off()
