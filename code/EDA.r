@@ -1,5 +1,4 @@
 library(MASS)
-library(scatterplot3d)
 library(psych)
 
 
@@ -39,13 +38,10 @@ dev.off()
 pca_htru2 <- prcomp(data_htru2[, 1:8])
 summary(pca_htru2)
 
-plot(pca_htru2$x[, 1:2], col = colors, main = "PCA")
-scatterplot3d(pca_htru2$x[, 1:3], color = colors, pch = 16, "PCA")
+plot(pca_htru2$x[, 1:2], col = colors, pch = 16, main = "PCA")
 
 # FA
 fa_htru2 <- factanal(data_htru2[, 1:8], factors = 3, scores = "Bartlett")
 summary(fa_htru2)
 
-plot(fa_htru2$scores[, 1:2], col = colors, main = "Factor analysis")
-scatterplot3d(fa_htru2$scores[, 1:3], color = colors, 
-              pch = 16, main = "Factor analysis")
+plot(fa_htru2$scores[, 1:2], col = colors, pch = 16, main = "Factor analysis")
