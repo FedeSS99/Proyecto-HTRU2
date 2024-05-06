@@ -1,7 +1,6 @@
 library(MASS)
 library(psych)
 
-
 data_htru2 <- read.csv("./data/HTRU_2.csv", header = FALSE)
 colnames(data_htru2) <- c("Mean IP", "Standard deviation IP",
                           "Excess kurtosis IP", "Skewness IP",
@@ -41,7 +40,7 @@ summary(pca_htru2)
 plot(pca_htru2$x[, 1:2], col = colors, pch = 16, main = "PCA")
 
 # FA
-fa_htru2 <- factanal(data_htru2[, 1:8], factors = 3, scores = "Bartlett")
+fa_htru2 <- factanal(data_htru2[, 1:8], factors = 2, scores = "Bartlett")
 summary(fa_htru2)
 
 plot(fa_htru2$scores[, 1:2], col = colors, pch = 16, main = "Factor analysis")
