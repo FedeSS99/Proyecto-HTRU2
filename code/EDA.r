@@ -21,7 +21,7 @@ colors[class_htru2 == 0] <- "blue"
 colors[class_htru2 == 1] <- "red"
 
 # Graficamos por pares
-png("./images/HTRU2_pairplots.png", width = 1600, height = 800)
+png("./images/HTRU2_pairplots.png", width = 1600, height = 1600)
 pairs.panels(data_htru2[, 1:8],
   ellipses = FALSE,
   smooth = FALSE,
