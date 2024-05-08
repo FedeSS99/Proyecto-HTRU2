@@ -37,10 +37,14 @@ dev.off()
 pca_htru2 <- prcomp(data_htru2[, 1:8])
 summary(pca_htru2)
 
+png("./images/HTRU2_PCA.png", width = 800, height = 800)
 plot(pca_htru2$x[, 1:2], col = colors, pch = 16, main = "PCA")
+dev.off()
 
 # FA
 fa_htru2 <- factanal(data_htru2[, 1:8], factors = 2, scores = "Bartlett")
 summary(fa_htru2)
 
+png("./images/HTRU2_FA.png", width = 800, height = 800)
 plot(fa_htru2$scores[, 1:2], col = colors, pch = 16, main = "Factor analysis")
+dev.off()
