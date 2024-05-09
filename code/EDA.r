@@ -25,7 +25,9 @@ data_htru2[, 1:8] <- scale(data_htru2[, 1:8])
 head(data_htru2)
 
 # Separamos las propiedades y las clases de todas las observaciones (Variable objetivo)
-class_htru2 <- data_htru2[, 9]
+# Se define como factor para que los modelos sepan que es una variable categorica
+class_htru2 <- as.factor(data_htru2[, 9])
+data_htru2[, 9] <- as.factor(data_htru2[, 9])
 
 # Generamos un vector de colores asignados dependiendo de si
 # 0 - No es un pulsar
@@ -93,17 +95,16 @@ dev.off()
 ######################
 # Particion de datos #
 ######################
-train.index <- createDataPartition(data_htru2$class, p = .7, list = FALSE) # ya realiza particion estratificada
+train.index <- createDataPartition(data_htru2$Class, p = .7, list = FALSE) # ya realiza particion estratificada
 htru2_train <- data_htru2[ train.index,]
 htru2_test  <- data_htru2[-train.index,]
 
 ###############
 # Modelo Base #
 ###############
-
-# LDA ? comprobar normalidad? (tambien para QDA?)
-
-# Regresion logistica? (no hace falta comprobar supuestos de normalidad)
+modelo_base <- train(Class ~ ., data = htru2_train, method = "glm", family = "binomial")
+modelo_base_pred <- predict(modelo_base, newdata = htru2_test)
+modelo_base_res <- confusionMatrix(modelo_base_pred, htru2_test$Class, positive = "1")
 
 ############################
 # Reduccion de dimensiones #
@@ -124,3 +125,13 @@ summary(fa_htru2)
 png("./images/HTRU2_FA.png", width = 800, height = 800)
 plot(fa_htru2$scores[, 1:2], col = colors, pch = 16, main = "Factor analysis")
 dev.off()
+
+########################
+# Modelos alternativos #
+########################
+
+# LDA y QDA?
+
+# Regresion logistica con PCA
+
+# Ponerse creativos
