@@ -41,7 +41,7 @@ colors[class_htru2 == 1] <- "red"
 #########################
 
 # Graficamos por pares
-png("HTRU2_pairplots.png", width = 1600, height = 1600)
+png("./images/HTRU2_pairplots.png", width = 1600, height = 1600)
 pairs.panels(data_htru2[, 1:8],
   ellipses = FALSE,
   smooth = FALSE,
@@ -67,7 +67,7 @@ for (i in 1:8){
   ylab("Frecuencia")
 }
 
-png("HTRU2_histogramas.png", width = 1600, height = 1600)
+png("./images/HTRU2_histogramas.png", width = 1600, height = 1600)
 grid.arrange(histogramas[[1]], histogramas[[2]], histogramas[[3]], histogramas[[4]],
              histogramas[[5]], histogramas[[6]], histogramas[[7]], histogramas[[8]],
              ncol=3)
@@ -86,7 +86,7 @@ for (i in 1:8){
   xlab('¿Es pulsar?')
 }
 
-png("HTRU2_gcajas.png", width = 1600, height = 1600)
+png("./images/HTRU2_gcajas.png", width = 1600, height = 1600)
 grid.arrange(gcajas[[1]], gcajas[[2]], gcajas[[3]], gcajas[[4]],
              gcajas[[5]], gcajas[[6]], gcajas[[7]], gcajas[[8]],
              ncol=3)
