@@ -97,32 +97,78 @@ dev.off()
 ######################
 train.index <- createDataPartition(data_htru2$Class, p = .7, list = FALSE) # ya realiza particion estratificada
 htru2_train <- data_htru2[ train.index,]
+colors_train <- character(nrow(htru2_train))
+colors_train[htru2_train$Class == 0] <- "blue"
+colors_train[htru2_train$Class == 1] <- "red"
+
 htru2_test  <- data_htru2[-train.index,]
+colors_test <- character(nrow(htru2_test))
+colors_test[htru2_test$Class == 0] <- "blue"
+colors_test[htru2_test$Class == 1] <- "red"
 
 ###############
 # Modelo Base #
 ###############
-modelo_base <- train(Class ~ ., data = htru2_train, method = "glm", family = "binomial")
-modelo_base_pred <- predict(modelo_base, newdata = htru2_test)
-modelo_base_res <- confusionMatrix(modelo_base_pred, htru2_test$Class, positive = "1")
+
+# Entrenamiento del modelo
+mb <- train(Class ~ ., data = htru2_train, method = "glm", family = "binomial")
+
+# Obtencion de las prediciones
+mb_pred <- predict(mb, newdata = htru2_test)
+
+# Obtencion de las metricas de evaluacion
+mb_res <- confusionMatrix(mb_pred, htru2_test$Class, positive = "1")
+print(mb_res)
 
 ############################
 # Reduccion de dimensiones #
 ############################
 
-# PCA
-pca_htru2 <- prcomp(data_htru2[, 1:8])
-summary(pca_htru2)
+# Prueba de correlacion de Spearman: correlacion no lineal
+sp_13 <- cor.test(data_htru2[ , 1], data_htru2[ , 3],  method = "spearman")
+sp_34 <- cor.test(data_htru2[ , 3], data_htru2[ , 4],  method = "spearman")
+sp_56 <- cor.test(data_htru2[ , 5], data_htru2[ , 6],  method = "spearman")
+sp_57 <- cor.test(data_htru2[ , 5], data_htru2[ , 7],  method = "spearman")
+sp_78 <- cor.test(data_htru2[ , 7], data_htru2[ , 8],  method = "spearman")
 
-png("./images/HTRU2_PCA.png", width = 800, height = 800)
-plot(pca_htru2$x[, 1:2], col = colors, pch = 16, main = "PCA")
+# PCA
+pca_htru2 <- prcomp(htru2_train[, 1:8])
+print(summary(pca_htru2))
+
+# Proporcion de varianza explicada
+aux = pca_htru2$sdev^2 / sum(pca_htru2$sdev^2)
+aux = data.frame(aux, c(1:8))
+colnames(aux)[2] ="NO_COMP"
+
+png("./images/HTRU2_PCA_Scree.png", width = 800, height = 800)
+print(ggplot(aux, aes(x = NO_COMP, y = aux)) +
+  geom_line() +
+  xlab("Número de componentes principales") +
+  ylab("Varianza explicada") +
+  ggtitle("Gráfica de 'codo' (Scree plot)") +
+  ylim(0, 1))
 dev.off()
+
+# Visualizacion de los datos en las primeras dos componentes principales
+png("./images/HTRU2_PCA.png", width = 800, height = 800)
+plot(pca_htru2$x[, 1:2], col = colors_train, pch = 16, main = "PCA")
+dev.off()
+
+# PCA de los datos de entrenamiento
+pca_htru2_train <- data.frame(pca_htru2$x[, 1:3],htru2_train$Class)
+colnames(pca_htru2_train)[4] ="Class"
+
+
+# Se obtienen las proyecciones en PCA de los datos de prueba
+pca_htru2_test <- predict(pca_htru2, newdata = htru2_test[1:8])
+pca_htru2_test <- data.frame(pca_htru2_test[, 1:3],htru2_test$Class)
+colnames(pca_htru2_test)[4] ="Class"
 
 # FA
 fa_htru2 <- factanal(data_htru2[, 1:8], factors = 2, scores = "Bartlett")
 summary(fa_htru2)
 
-png("./images/HTRU2_FA.png", width = 800, height = 800)
+png("HTRU2_FA.png", width = 800, height = 800)
 plot(fa_htru2$scores[, 1:2], col = colors, pch = 16, main = "Factor analysis")
 dev.off()
 
@@ -132,6 +178,17 @@ dev.off()
 
 # LDA y QDA?
 
-# Regresion logistica con PCA
+# Modelo base con PCA #
+
+# Se entrena el modelo con los datos transformados por PCA
+mb_pca <- train(Class ~ ., data = pca_htru2_train, method = "glm", family = "binomial")
+
+# Se obtienen las predicciones de los datos de prueba
+mb_pca_pred <- predict(mb_pca, newdata = pca_htru2_test[, 1:3])
+
+# Obtencion de las metricas de evaluacion
+mb_pca_res <- confusionMatrix(mb_pca_pred, pca_htru2_test$Class, positive = "1")
+print(mb_pca_res)
+
 
 # Ponerse creativos
