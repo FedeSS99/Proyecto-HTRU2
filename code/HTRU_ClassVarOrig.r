@@ -36,7 +36,7 @@ colors[class_htru2 == 1] <- "red"
 ######################
 # Particion de datos #
 ######################
-train.index <- createDataPartition(data_htru2$Class, p = .7, list = FALSE)
+train.index <- createDataPartition(class_htru2, p = .7, list = FALSE)
 htru2_train <- data_htru2[train.index, ]
 colors_train <- character(nrow(htru2_train))
 colors_train[htru2_train$Class == 0] <- "blue"
@@ -53,12 +53,14 @@ colors_test[htru2_test$Class == 1] <- "red"
 lda_htru_original <- lda(x = data_htru2[, 1:8], 
                          prior = c(1, 1) / 2.0,
                          subset = train.index,
-                         grouping = data_htru2$Class)
+                         grouping = class_htru2)
 lda_predict_train <- predict(object = lda_htru_original, newdata = htru2_test[, 1:8])
 confusionmatrix_lda <- table(htru2_test$Class, lda_predict_train$class, dnn = c("Clase real", "Clase predicha"))
-getmetrics_confmatrix(confusionmatrix_lda)
+metrics_lda <- getmetrics_confmatrix(confusionmatrix_lda)
+print(confusionmatrix_lda)
+print_metrics(metrics_lda)
 
-partimat(data_htru2[, 1:8], grouping = data_htru2$Class, methods = "lda", plot.matrix = TRUE)
+partimat(data_htru2[, 1:8], grouping = class_htru2, methods = "lda", plot.matrix = TRUE)
 
 ######################
 # QDA #
@@ -66,9 +68,11 @@ partimat(data_htru2[, 1:8], grouping = data_htru2$Class, methods = "lda", plot.m
 qda_htru_original <- qda(x = data_htru2[, 1:8], 
                          prior = c(1, 1) / 2.0,
                          subset = train.index,
-                         grouping = data_htru2$Class)
+                         grouping = class_htru2)
 qda_predict_train <- predict(object = qda_htru_original, newdata = htru2_test[, 1:8])
 confusionmatrix_qda <- table(htru2_test$Class, qda_predict_train$class, dnn = c("Clase real", "Clase predicha"))
-getmetrics_confmatrix(confusionmatrix_qda)
+metrics_qda <- getmetrics_confmatrix(confusionmatrix_qda)
+print(confusionmatrix_qda)
+print_metrics(metrics_qda)
 
-partimat(data_htru2[, 1:8], grouping = data_htru2$Class, methods = "qda", plot.matrix = TRUE)
+partimat(data_htru2[, 1:8], grouping = class_htru2, methods = "qda", plot.matrix = TRUE)
