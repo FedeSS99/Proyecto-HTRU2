@@ -35,57 +35,47 @@ colors[class_htru2 == 0] <- "blue"
 colors[class_htru2 == 1] <- "red"
 
 ######################
-# Particion de datos #
+# Particion de datos#
 ######################
 train.index <- createDataPartition(data_htru2$Class, p = .7, list = FALSE)
-htru2_train <- data_htru2[train.index, ]
-colors_train <- character(nrow(htru2_train))
-colors_train[htru2_train$Class == 0] <- "blue"
-colors_train[htru2_train$Class == 1] <- "red"
-
 htru2_test  <- data_htru2[-train.index,]
-colors_test <- character(nrow(htru2_test))
-colors_test[htru2_test$Class == 0] <- "blue"
-colors_test[htru2_test$Class == 1] <- "red"
 
 ######################
 # Analisis de factores #
 #####################$
 fa_htru <- factanal(data_htru2[, 1:8], factors = 2, scores = "Bartlett")
-fa_htru
+fa_htru_scores <- fa_htru$scores
 
-fa_train_htru <- factanal(htru2_train[, 1:8], factors = 2, scores = "Bartlett")
-fa_train_htru
-
-fa_test_htru <- factanal(htru2_test[, 1:8], factors = 2, scores = "Bartlett")
-fa_test_htru
-
+fa_htru_train <- fa_htru_scores[train.index, ]
+fa_htru_test <- fa_htru_scores[-train.index, ]
 ######################
 # LDA #
 #####################$
-lda_htru_factors <- lda(x = fa_htru$scores,
+lda_htru_factors <- lda(x = fa_htru_scores,
                          prior = c(1, 1) / 2.0,
                          subset = train.index,
-                         grouping = data_htru2$Class)
+                         grouping = class_htru2)
 
-lda_predict_train <- predict(object = lda_htru_factors, newdata = fa_test_htru$scores)
+lda_predict_train <- predict(object = lda_htru_factors, newdata = fa_htru_test)
 confusionmatrix_lda <- table(htru2_test$Class, lda_predict_train$class, dnn = c("Clase real", "Clase predicha"))
-confusionmatrix_lda
-getmetrics_confmatrix(confusionmatrix_lda)
+metrics_lda <- getmetrics_confmatrix(confusionmatrix_lda)
+print(confusionmatrix_lda)
+print_metrics(metrics_lda)
 
-partimat(fa_htru$scores, grouping = data_htru2$Class, methods = "lda")
+partimat(fa_htru_scores, grouping = class_htru2, methods = "lda")
 
 ######################
 # QDA #
 #####################$
-qda_htru_factors <- qda(x = fa_htru$scores,
+qda_htru_factors <- qda(x = fa_htru_scores,
                          prior = c(1, 1) / 2.0,
                          subset = train.index,
-                         grouping = data_htru2$Class)
+                         grouping = class_htru2)
 
-qda_predict_train <- predict(object = qda_htru_factors, newdata = fa_test_htru$scores)
+qda_predict_train <- predict(object = qda_htru_factors, newdata = fa_htru_test)
 confusionmatrix_qda <- table(htru2_test$Class, qda_predict_train$class, dnn = c("Clase real", "Clase predicha"))
-confusionmatrix_qda
-getmetrics_confmatrix(confusionmatrix_qda)
+metrics_qda <- getmetrics_confmatrix(confusionmatrix_qda)
+print(confusionmatrix_qda)
+print_metrics(metrics_qda)
 
-partimat(fa_htru$scores, grouping = data_htru2$Class, methods = "qda")
+partimat(fa_htru_scores, grouping = class_htru2, methods = "qda")
