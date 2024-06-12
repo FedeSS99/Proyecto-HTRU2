@@ -22,7 +22,7 @@ qda_htru_original <- qda(x = htru2_train[, 1:8],
 
                          grouping = htru2_train$Class)
 qda_predict_train <- predict(object = qda_htru_original, newdata = htru2_test[, 1:8])
-qda_res <- confusionMatrix(lda_predict_train$class, htru2_test$Class, positive = "1")
+qda_res <- confusionMatrix(qda_predict_train$class, htru2_test$Class, positive = "1")
 print(qda_res)
 
 png(paste0(rute_img, "HTRU2_QDA.png"), width = 800, height = 800)

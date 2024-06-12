@@ -25,6 +25,25 @@ pairs.panels(data_htru2[, 1:8],
 )
 dev.off()
 
+# Histogramas: sin separar por el tipo de observacion
+histogramas<-list()
+for (i in 1:8){
+  x = data_htru2[,i]
+  histogramas[[i]] <- ggplot(data.frame(x),
+                             aes(x = x)) +
+    geom_histogram(alpha = 0.5, position = "identity", color="darkblue", fill="lightblue") +
+    
+    ggtitle(colnames(data_htru2[i])) +
+    xlab(colnames(data_htru2[i])) +
+    ylab("Frecuencia")
+}
+
+png(paste0(rute_img, "HTRU2_histogramas_0.png"), width = 1600, height = 1600)
+grid.arrange(histogramas[[1]], histogramas[[2]], histogramas[[3]], histogramas[[4]],
+             histogramas[[5]], histogramas[[6]], histogramas[[7]], histogramas[[8]],
+             ncol=3)
+dev.off()
+
 # Histogramas: comparacion visual de distribuciones
 histogramas<-list()
 for (i in 1:8){
@@ -63,6 +82,20 @@ grid.arrange(gcajas[[1]], gcajas[[2]], gcajas[[3]], gcajas[[4]],
              gcajas[[5]], gcajas[[6]], gcajas[[7]], gcajas[[8]],
              ncol=3)
 dev.off()
+
+# Prueba de normalidad
+
+# Prueba de Kolmogorov-Smirnov
+for (i in 1:8){
+  x = data_htru2[,i]
+  print(ks.test(x, 'pnorm'))
+}
+
+# Prueba de Anderson-Darling
+for (i in 1:8){
+  x = data_htru2[,i]
+  print(ad.test(x))
+}
 
 # Prueba de correlacion de Spearman: correlacion no lineal
 sp_13 <- cor.test(data_htru2[ , 1], data_htru2[ , 3],  method = "spearman")

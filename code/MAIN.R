@@ -11,6 +11,8 @@ library(CCA)
 library(caret)
 library(klaR)
 library(microbenchmark)
+library(smacof)
+library(nortest)
 
 
 
